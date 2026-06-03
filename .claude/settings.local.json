@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(New-Item -ItemType Directory -Force \"c:\\\\Users\\\\hp\\\\Desktop\\\\test-ecom\\\\src\\\\data\")",
+      "PowerShell(New-Item -ItemType Directory -Force \"c:\\\\Users\\\\hp\\\\Desktop\\\\test-ecom\\\\src\\\\components\")"
+    ]
+  }
+}

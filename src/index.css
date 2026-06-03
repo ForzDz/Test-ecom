@@ -1,0 +1,157 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* =====================================================
+   VARIABLES CSS GLOBALES – Palette Women Hood
+   ===================================================== */
+:root {
+  --or-accent:    #c8941e;
+  --beige-base:   #f9f2e8;
+  --rose-poudre:  #f0d6d6;
+  --brun-fonce:   #4a3228;
+  --or-clair:     #f5e6b8;
+}
+
+/* =====================================================
+   BASE
+   ===================================================== */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Jost', sans-serif;
+  background-color: #fdfaf6;
+  color: #4a3228;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* =====================================================
+   SCROLLBAR PERSONNALISÉE
+   ===================================================== */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #f9f2e8;
+}
+::-webkit-scrollbar-thumb {
+  background: #d4a843;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #a07820;
+}
+
+/* =====================================================
+   SÉLECTION DE TEXTE
+   ===================================================== */
+::selection {
+  background-color: #f0d6d6;
+  color: #4a3228;
+}
+
+/* =====================================================
+   CLASSES UTILITAIRES PERSONNALISÉES
+   ===================================================== */
+
+/* Ligne dorée décorative */
+.gold-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #d4a843, transparent);
+  width: 100%;
+}
+
+/* Ornement en losange doré */
+.gold-ornament::before,
+.gold-ornament::after {
+  content: '◆';
+  color: #d4a843;
+  font-size: 0.6rem;
+  margin: 0 0.5rem;
+  opacity: 0.7;
+}
+
+/* Texte avec dégradé doré */
+.text-gold-gradient {
+  background: linear-gradient(135deg, #c8941e, #f5e6b8, #c8941e);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Fond en motif de grain subtil */
+.bg-grain {
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+}
+
+/* Bouton principal */
+.btn-primary {
+  @apply bg-brun-fonce text-beige-50 font-ui font-medium tracking-widest uppercase text-xs px-6 py-3 transition-all duration-300;
+  letter-spacing: 0.15em;
+}
+.btn-primary:hover {
+  @apply bg-or-moyen text-white;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 20px rgba(212, 168, 67, 0.35);
+}
+
+/* Bouton secondaire contour */
+.btn-outline {
+  @apply border border-brun-fonce text-brun-fonce font-ui font-medium tracking-widest uppercase text-xs px-6 py-3 transition-all duration-300;
+  letter-spacing: 0.15em;
+}
+.btn-outline:hover {
+  @apply bg-brun-fonce text-beige-50;
+}
+
+/* Carte produit */
+.product-card {
+  @apply bg-white transition-all duration-500;
+  box-shadow: 0 2px 12px rgba(74, 50, 40, 0.06);
+}
+.product-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 40px rgba(74, 50, 40, 0.14);
+}
+
+/* Input de formulaire élégant */
+.form-input {
+  @apply w-full border-b border-beige-300 bg-transparent py-2 px-0 font-ui text-sm text-brun-fonce placeholder-beige-400 outline-none transition-all duration-300;
+}
+.form-input:focus {
+  border-color: #d4a843;
+}
+
+/* Label de formulaire */
+.form-label {
+  @apply block font-ui text-xs uppercase tracking-widest text-brun-clair mb-1;
+  letter-spacing: 0.12em;
+}
+
+/* Overlay modal */
+.modal-overlay {
+  background: rgba(74, 50, 40, 0.5);
+  backdrop-filter: blur(4px);
+}
+
+/* Animation d'entrée avec délai */
+.animate-delay-100 { animation-delay: 100ms; }
+.animate-delay-200 { animation-delay: 200ms; }
+.animate-delay-300 { animation-delay: 300ms; }
+.animate-delay-400 { animation-delay: 400ms; }
+.animate-delay-500 { animation-delay: 500ms; }
+.animate-delay-600 { animation-delay: 600ms; }
+
+/* Opacité initiale à 0 pour les éléments animés */
+.opacity-anim {
+  opacity: 0;
+}

@@ -40,7 +40,7 @@ export default function Hero({ onDecouvrir }) {
               className="font-ui uppercase tracking-widest text-or-accent text-xs mb-4 opacity-anim animate-fade-up"
               style={{ letterSpacing: '0.3em' }}
             >
-              ✦ Nouvelle Collection 2025 ✦
+              ✦ Nouvelle Collection 2026 ✦
             </p>
 
             {/* Titre principal */}

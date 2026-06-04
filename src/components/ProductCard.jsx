@@ -9,17 +9,10 @@ export default function ProductCard({ produit, onAjouterAuPanier }) {
       {/* Zone image */}
       <div className="relative overflow-hidden bg-beige-100" style={{ aspectRatio: '4/5' }}>
 
-        {/* Badge (Nouveau, Best-seller, etc.) */}
-        {produit.badge && (
-          <span className="absolute top-3 left-3 z-10 bg-brun-fonce text-beige-50 font-ui text-xs px-3 py-1 uppercase tracking-widest">
-            {produit.badge}
-          </span>
-        )}
-
         {/* Image du sac */}
         <img
           src={produit.image}
-          alt={produit.nom}
+          alt={produit.name}
           className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
           loading="lazy"
         />
@@ -38,14 +31,9 @@ export default function ProductCard({ produit, onAjouterAuPanier }) {
       {/* Infos produit */}
       <div className="p-4 flex flex-col flex-1">
 
-        {/* Couleur */}
-        <p className="font-ui text-beige-400 uppercase tracking-widest mb-1" style={{ fontSize: '0.65rem', letterSpacing: '0.2em' }}>
-          {produit.couleur}
-        </p>
-
         {/* Nom */}
         <h3 className="font-display font-semibold text-brun-fonce text-lg mb-1 group-hover:text-or-accent transition-colors duration-300">
-          {produit.nom}
+          {produit.name}
         </h3>
 
         {/* Description courte */}
@@ -58,7 +46,7 @@ export default function ProductCard({ produit, onAjouterAuPanier }) {
 
           <div>
             <span className="font-display font-bold text-brun-fonce" style={{ fontSize: '1.1rem' }}>
-              {produit.prix.toLocaleString('fr-DZ')}
+              {Number(produit.price).toLocaleString('fr-DZ')}
             </span>
             <span className="font-ui text-brun-clair text-xs ml-1">DA</span>
           </div>
@@ -66,7 +54,7 @@ export default function ProductCard({ produit, onAjouterAuPanier }) {
           <button
             onClick={() => onAjouterAuPanier(produit)}
             className="w-9 h-9 flex items-center justify-center border border-brun-fonce text-brun-fonce hover:bg-brun-fonce hover:text-beige-50 transition-all duration-300"
-            aria-label={`Ajouter ${produit.nom} au panier`}
+            aria-label={`Ajouter ${produit.name} au panier`}
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 4v16m8-8H4" />

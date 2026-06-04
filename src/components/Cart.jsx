@@ -5,7 +5,7 @@
 export default function Cart({ panier, onFermer, onModifierQte, onSupprimerItem, onCommander }) {
 
   // Calcul du total articles (sans livraison)
-  const sousTotal = panier.reduce((acc, item) => acc + item.prix * item.quantite, 0)
+  const sousTotal = panier.reduce((acc, item) => acc + Number(item.price) * item.quantite, 0)
 
   return (
     <>
@@ -60,19 +60,18 @@ export default function Cart({ panier, onFermer, onModifierQte, onSupprimerItem,
                   <div className="w-20 h-24 flex-shrink-0 bg-beige-100 overflow-hidden">
                     <img
                       src={item.image}
-                      alt={item.nom}
+                      alt={item.name}
                       className="w-full h-full object-cover"
                     />
                   </div>
 
                   {/* Détails */}
                   <div className="flex-1 min-w-0">
-                    <h3 className="font-display font-semibold text-brun-fonce text-sm">{item.nom}</h3>
-                    <p className="font-ui text-brun-clair text-xs mt-0.5">{item.couleur}</p>
+                    <h3 className="font-display font-semibold text-brun-fonce text-sm">{item.name}</h3>
 
                     {/* Prix unitaire */}
                     <p className="font-display text-brun-fonce text-sm mt-1">
-                      {item.prix.toLocaleString('fr-DZ')} DA
+                      {Number(item.price).toLocaleString('fr-DZ')} DA
                     </p>
 
                     {/* Contrôle quantité */}
@@ -105,7 +104,7 @@ export default function Cart({ panier, onFermer, onModifierQte, onSupprimerItem,
                       <button
                         onClick={() => onSupprimerItem(item.id)}
                         className="ml-auto text-beige-400 hover:text-rose-fonce transition-colors duration-200"
-                        aria-label={`Supprimer ${item.nom}`}
+                        aria-label={`Supprimer ${item.name}`}
                       >
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />

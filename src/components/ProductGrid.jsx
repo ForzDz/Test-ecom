@@ -1,17 +1,52 @@
 // =====================================================
-// PRODUCT GRID – Grille de tous les produits
+// PRODUCT GRID – Grille de tous les produits (chargés depuis Supabase)
 // =====================================================
+import { useState, useEffect } from 'react'
 import ProductCard from './ProductCard'
-import { products } from '../data/products'
+import { supabase } from '../lib/supabase'
+
+// Gère les deux cas :
+//  - URL Supabase complète → utilisée directement
+//  - Ancien nom de fichier local (ex: "sac1.png") → résolu vers src/images/
+const resolveImageUrl = (imageUrl) => {
+  if (!imageUrl) return ''
+  if (imageUrl.startsWith('http')) return imageUrl
+  return new URL(`../images/${imageUrl}`, import.meta.url).href
+}
 
 export default function ProductGrid({ onAjouterAuPanier }) {
+  const [products, setProducts] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
+
+  useEffect(() => {
+    async function fetchProducts() {
+      const { data, error } = await supabase
+        .from('products')
+        .select('*')
+        .order('id')
+
+      if (error) {
+        setError(error.message)
+      } else {
+        const produits = data.map((p) => ({
+          ...p,
+          image: resolveImageUrl(p.image_url),
+        }))
+        setProducts(produits)
+      }
+      setLoading(false)
+    }
+
+    fetchProducts()
+  }, [])
+
   return (
     <section id="collection" className="py-20 px-4" style={{ background: '#fdfaf6' }}>
       <div className="max-w-6xl mx-auto">
 
         {/* En-tête de section */}
         <div className="text-center mb-14">
-          {/* Ornement doré */}
           <p className="font-ui uppercase tracking-widest text-or-accent text-xs mb-3" style={{ letterSpacing: '0.3em' }}>
             ✦ Notre Sélection ✦
           </p>
@@ -20,7 +55,6 @@ export default function ProductGrid({ onAjouterAuPanier }) {
             La Collection
           </h2>
 
-          {/* Ligne décorative */}
           <div className="flex items-center justify-center gap-4 mb-4">
             <div className="gold-divider w-16" />
             <span className="text-or-accent text-xs">◆</span>
@@ -32,21 +66,44 @@ export default function ProductGrid({ onAjouterAuPanier }) {
           </p>
         </div>
 
-        {/* Grille responsive : 1 col mobile, 2 col tablette, 3 col desktop */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
-          {products.map((produit, index) => (
-            <div
-              key={produit.id}
-              className="opacity-anim animate-fade-up"
-              style={{ animationDelay: `${index * 100}ms` }}
-            >
-              <ProductCard
-                produit={produit}
-                onAjouterAuPanier={onAjouterAuPanier}
-              />
+        {/* État de chargement */}
+        {loading && (
+          <div className="flex justify-center items-center py-20">
+            <div className="flex flex-col items-center gap-4">
+              <div className="w-8 h-8 border-2 border-or-accent border-t-transparent rounded-full animate-spin" />
+              <p className="font-ui text-xs uppercase tracking-widest text-brun-clair">
+                Chargement de la collection…
+              </p>
             </div>
-          ))}
-        </div>
+          </div>
+        )}
+
+        {/* Erreur de chargement */}
+        {error && (
+          <div className="text-center py-20">
+            <p className="font-body text-red-400 italic">
+              Impossible de charger les produits. Veuillez réessayer.
+            </p>
+          </div>
+        )}
+
+        {/* Grille responsive : 1 col mobile, 2 col tablette, 3 col desktop */}
+        {!loading && !error && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+            {products.map((produit, index) => (
+              <div
+                key={produit.id}
+                className="opacity-anim animate-fade-up"
+                style={{ animationDelay: `${index * 100}ms` }}
+              >
+                <ProductCard
+                  produit={produit}
+                  onAjouterAuPanier={onAjouterAuPanier}
+                />
+              </div>
+            ))}
+          </div>
+        )}
 
         {/* Note de livraison sous la grille */}
         <div className="mt-14 text-center">

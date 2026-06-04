@@ -3,6 +3,7 @@
 // =====================================================
 import { useState } from 'react'
 import { wilayas, fraisLivraison } from '../data/products'
+import { supabase } from '../lib/supabase'
 
 export default function OrderForm({ panier, onFermer, onConfirmer }) {
 
@@ -20,8 +21,12 @@ export default function OrderForm({ panier, onFermer, onConfirmer }) {
   // Erreurs de validation
   const [erreurs, setErreurs] = useState({})
 
+  // État de soumission vers Supabase
+  const [submitting, setSubmitting]       = useState(false)
+  const [erreurServeur, setErreurServeur] = useState(null)
+
   // Calculs
-  const sousTotal     = panier.reduce((acc, item) => acc + item.prix * item.quantite, 0)
+  const sousTotal     = panier.reduce((acc, item) => acc + Number(item.price) * item.quantite, 0)
   const frais         = fraisLivraison[form.typeLivraison]
   const total         = sousTotal + frais
 
@@ -46,16 +51,62 @@ export default function OrderForm({ panier, onFermer, onConfirmer }) {
     return nouvellesErreurs
   }
 
-  // Soumission du formulaire
-  const handleSubmit = (e) => {
+  // Soumission du formulaire → sauvegarde dans Supabase
+  const handleSubmit = async (e) => {
     e.preventDefault()
     const nouvellesErreurs = valider()
     if (Object.keys(nouvellesErreurs).length > 0) {
       setErreurs(nouvellesErreurs)
       return
     }
-    // Tout est valide → on confirme
-    onConfirmer({ ...form, panier, sousTotal, frais, total })
+
+    setSubmitting(true)
+    setErreurServeur(null)
+
+    try {
+      // ── Étape 1 : créer la commande dans "orders" ──────────────────────
+      // On insère une ligne et on demande à Supabase de nous retourner
+      // l'id généré (.select('id').single() → un seul objet, pas un tableau)
+      const { data: order, error: orderError } = await supabase
+        .from('orders')
+        .insert({
+          customer_name:    `${form.prenom} ${form.nom}`,
+          customer_phone:   form.telephone,
+          customer_wilaya:  form.wilaya,
+          customer_commune: form.commune,
+          customer_address: form.adresse,
+          delivery_type:    form.typeLivraison,
+          total,
+        })
+        .select('id')
+        .single()
+
+      if (orderError) throw orderError
+
+      // ── Étape 2 : insérer les articles dans "order_items" ──────────────
+      // Chaque ligne porte order_id = id de la commande créée ci-dessus.
+      // C'est la clé étrangère qui lie les articles à leur commande.
+      const lignesArticles = panier.map((item) => ({
+        order_id:   order.id,
+        product_id: item.id,
+        quantity:   item.quantite,
+      }))
+
+      const { error: itemsError } = await supabase
+        .from('order_items')
+        .insert(lignesArticles)
+
+      if (itemsError) throw itemsError
+
+      // ── Étape 3 : tout a réussi → confirmer et vider le panier ─────────
+      onConfirmer({ ...form, panier, sousTotal, frais, total })
+
+    } catch (err) {
+      console.error('Erreur lors de la sauvegarde de la commande :', err)
+      setErreurServeur('Une erreur est survenue. Veuillez réessayer ou nous contacter.')
+    } finally {
+      setSubmitting(false)
+    }
   }
 
   return (
@@ -98,8 +149,8 @@ export default function OrderForm({ panier, onFermer, onConfirmer }) {
             <div className="mt-4 bg-white border border-beige-200 p-3">
               {panier.map((item) => (
                 <div key={item.id} className="flex justify-between font-ui text-sm text-brun-clair py-1">
-                  <span>{item.nom} × {item.quantite}</span>
-                  <span className="font-medium text-brun-fonce">{(item.prix * item.quantite).toLocaleString('fr-DZ')} DA</span>
+                  <span>{item.name} × {item.quantite}</span>
+                  <span className="font-medium text-brun-fonce">{(Number(item.price) * item.quantite).toLocaleString('fr-DZ')} DA</span>
                 </div>
               ))}
             </div>
@@ -297,13 +348,30 @@ export default function OrderForm({ panier, onFermer, onConfirmer }) {
             {/* Bouton de confirmation */}
             <button
               type="submit"
-              className="btn-primary w-full text-center flex items-center justify-center gap-3"
+              disabled={submitting}
+              className="btn-primary w-full text-center flex items-center justify-center gap-3 disabled:opacity-60 disabled:cursor-not-allowed"
             >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-              </svg>
-              Confirmer la commande
+              {submitting ? (
+                <>
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  Enregistrement…
+                </>
+              ) : (
+                <>
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                  Confirmer la commande
+                </>
+              )}
             </button>
+
+            {/* Message d'erreur serveur */}
+            {erreurServeur && (
+              <p className="font-ui text-red-500 text-xs text-center bg-red-50 border border-red-200 px-4 py-3">
+                {erreurServeur}
+              </p>
+            )}
 
             <p className="font-ui text-brun-clair text-xs text-center">
               En confirmant, vous acceptez d'être contactée pour la livraison.

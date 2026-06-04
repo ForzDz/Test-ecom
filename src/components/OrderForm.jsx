@@ -77,6 +77,7 @@ export default function OrderForm({ panier, onFermer, onConfirmer }) {
           customer_address: form.adresse,
           delivery_type:    form.typeLivraison,
           total,
+          status:           'en attente',
         })
         .select('id')
         .single()

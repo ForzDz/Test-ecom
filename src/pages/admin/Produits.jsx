@@ -1,17 +1,26 @@
 import { useState, useEffect, useRef } from 'react'
 import { supabase } from '../../lib/supabase'
+import sac1 from '../../images/sac1.png'
+import sac2 from '../../images/sac2.png'
+import sac3 from '../../images/sac3.png'
+import sac4 from '../../images/sac4.png'
+import sac5 from '../../images/sac5.png'
+import sac6 from '../../images/sac6.png'
 
-// Gère les deux cas pour l'affichage dans la liste admin :
-//  - URL Supabase complète (http…) → directe
-//  - Ancien nom de fichier local   → résolu vers src/images/
+const LEGACY_IMAGES = {
+  'sac1.png': sac1,
+  'sac2.png': sac2,
+  'sac3.png': sac3,
+  'sac4.png': sac4,
+  'sac5.png': sac5,
+  'sac6.png': sac6,
+}
+
+// URL Supabase complète → directe ; nom de fichier legacy → lookup statique
 const resolveImageUrl = (imageUrl) => {
   if (!imageUrl) return ''
   if (imageUrl.startsWith('http')) return imageUrl
-  try {
-    return new URL(`../../images/${imageUrl}`, import.meta.url).href
-  } catch {
-    return ''
-  }
+  return LEGACY_IMAGES[imageUrl] ?? ''
 }
 
 const FORM_VIDE   = { name: '', description: '', price: '', stock: '' }

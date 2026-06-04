@@ -1,6 +1,7 @@
 // =====================================================
 // HERO – Bannière principale avec slogan et image produit
 // =====================================================
+import heroImage from '../images/sac3.png'
 
 export default function Hero({ onDecouvrir }) {
   return (
@@ -122,7 +123,7 @@ export default function Hero({ onDecouvrir }) {
 
             {/* Image produit mise en avant */}
             <img
-              src="/src/images/sac3.png"
+              src={heroImage}
               alt="Sac Women Hood – vedette de la collection"
               className="relative z-10 object-contain drop-shadow-2xl"
               style={{
